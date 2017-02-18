@@ -70,6 +70,14 @@ __published:	// IDE-managed Components
 	TLabel *Label8;
 	TEdit *Edit5;
 	TButton *Button11;
+	TLineSeries *Series3;
+	TEdit *Edit6;
+	TLabel *Label9;
+	TLabel *Label10;
+	TEdit *Edit7;
+	TButton *Button12;
+	TLabel *Label11;
+	TLabel *Label12;
 	void __fastcall Button2Click(TObject *Sender);
 	void __fastcall Button1Click(TObject *Sender);
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
@@ -82,6 +90,9 @@ __published:	// IDE-managed Components
 	void __fastcall Edit1Change(TObject *Sender);
 	void __fastcall Button8Click(TObject *Sender);
 	void __fastcall Button11Click(TObject *Sender);
+	void __fastcall Button12Click(TObject *Sender);
+	void __fastcall Button9Click(TObject *Sender);
+	void __fastcall Button10Click(TObject *Sender);
 private:	// User declarations
 	class MyCBuf {
 
@@ -164,6 +175,7 @@ public:		// User declarations
 	ifstream fromfile;
 
 	std::vector<unsigned char> buffer;
+	DWORD buffer_cur_pos;
 	void TForm3::deleteFFFF();
 	DWORD ShowBlockFromFile(int shift);
 

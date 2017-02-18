@@ -2,7 +2,7 @@ object Form3: TForm3
   Left = 0
   Top = 0
   Caption = 'Cracker reader'
-  ClientHeight = 514
+  ClientHeight = 522
   ClientWidth = 757
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -18,10 +18,11 @@ object Form3: TForm3
     Left = 0
     Top = 0
     Width = 757
-    Height = 408
+    Height = 421
     ActivePage = TabSheet1
     Align = alClient
     TabOrder = 0
+    ExplicitHeight = 408
     object TabSheet1: TTabSheet
       Caption = 'Chart'
       ExplicitHeight = 373
@@ -29,7 +30,7 @@ object Form3: TForm3
         Left = 0
         Top = 0
         Width = 749
-        Height = 330
+        Height = 320
         Legend.CheckBoxes = True
         Title.Text.Strings = (
           'TChart')
@@ -61,15 +62,25 @@ object Form3: TForm3
           YValues.Name = 'Y'
           YValues.Order = loNone
         end
+        object Series3: TLineSeries
+          Legend.Text = 'From file'
+          LegendTitle = 'From file'
+          Brush.BackColor = clDefault
+          Pointer.InflateMargins = True
+          Pointer.Style = psRectangle
+          XValues.Name = 'X'
+          XValues.Order = loAscending
+          YValues.Name = 'Y'
+          YValues.Order = loNone
+        end
       end
       object Panel3: TPanel
         Left = 0
-        Top = 330
+        Top = 320
         Width = 749
-        Height = 50
+        Height = 73
         Align = alBottom
         TabOrder = 1
-        ExplicitTop = 323
         object Label3: TLabel
           Left = 4
           Top = 6
@@ -83,6 +94,34 @@ object Form3: TForm3
           Width = 59
           Height = 13
           Caption = 'Tic start pos'
+        end
+        object Label9: TLabel
+          Left = 590
+          Top = 6
+          Width = 68
+          Height = 13
+          Caption = 'Shift in signals'
+        end
+        object Label10: TLabel
+          Left = 664
+          Top = 6
+          Width = 69
+          Height = 13
+          Caption = 'Data start pos'
+        end
+        object Label11: TLabel
+          Left = 376
+          Top = 37
+          Width = 31
+          Height = 13
+          Caption = 'Total: '
+        end
+        object Label12: TLabel
+          Left = 376
+          Top = 56
+          Width = 41
+          Height = 13
+          Caption = 'Current:'
         end
         object Edit1: TEdit
           Left = 4
@@ -103,31 +142,58 @@ object Form3: TForm3
           OnChange = Edit2Change
         end
         object Button8: TButton
-          Left = 488
+          Left = 376
           Top = 6
-          Width = 75
+          Width = 114
           Height = 25
           Caption = 'From File'
           TabOrder = 2
           OnClick = Button8Click
         end
         object Button9: TButton
-          Left = 569
+          Left = 496
           Top = 6
           Width = 40
           Height = 25
           Caption = '<<<'
           Enabled = False
           TabOrder = 3
+          OnClick = Button9Click
         end
         object Button10: TButton
-          Left = 615
+          Left = 542
           Top = 6
           Width = 42
           Height = 25
           Caption = '>>>'
           Enabled = False
           TabOrder = 4
+          OnClick = Button10Click
+        end
+        object Edit6: TEdit
+          Left = 590
+          Top = 27
+          Width = 68
+          Height = 21
+          TabOrder = 5
+          Text = '100'
+        end
+        object Edit7: TEdit
+          Left = 664
+          Top = 27
+          Width = 73
+          Height = 21
+          TabOrder = 6
+          Text = '0'
+        end
+        object Button12: TButton
+          Left = 496
+          Top = 37
+          Width = 88
+          Height = 21
+          Caption = 'Refresh'
+          TabOrder = 7
+          OnClick = Button12Click
         end
       end
     end
@@ -136,6 +202,7 @@ object Form3: TForm3
       ImageIndex = 1
       ExplicitLeft = 3
       ExplicitTop = 22
+      ExplicitHeight = 380
       object Label2: TLabel
         Left = 0
         Top = 6
@@ -240,7 +307,7 @@ object Form3: TForm3
       ExplicitHeight = 373
       object Panel2: TPanel
         Left = 0
-        Top = 348
+        Top = 361
         Width = 749
         Height = 32
         Align = alBottom
@@ -261,7 +328,7 @@ object Form3: TForm3
         Left = 0
         Top = 0
         Width = 749
-        Height = 348
+        Height = 361
         Align = alClient
         Lines.Strings = (
           'Memo1')
@@ -274,12 +341,12 @@ object Form3: TForm3
   end
   object Panel1: TPanel
     Left = 0
-    Top = 408
+    Top = 421
     Width = 757
-    Height = 65
+    Height = 60
     Align = alBottom
     TabOrder = 1
-    ExplicitTop = 401
+    ExplicitTop = 416
     object Label1: TLabel
       Left = 89
       Top = 40
@@ -341,7 +408,7 @@ object Form3: TForm3
   end
   object Panel4: TPanel
     Left = 0
-    Top = 473
+    Top = 481
     Width = 757
     Height = 41
     Align = alBottom
@@ -374,10 +441,6 @@ object Form3: TForm3
           Height = 35
           Align = alClient
           TabOrder = 0
-          ExplicitLeft = 29
-          ExplicitTop = 4
-          ExplicitWidth = 150
-          ExplicitHeight = 17
         end
       end
     end

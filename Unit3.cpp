@@ -28,7 +28,7 @@ __fastcall TForm3::TForm3(TComponent* Owner)
 	this->mycbuf->init(BUFSIZE * Edit5->Text.ToInt());
 
 
-
+    this->Series2->Visible = false;
 }
 //---------------------------------------------------------------------------
 void __fastcall TForm3::Button2Click(TObject *Sender)
@@ -63,12 +63,26 @@ void TForm3::printTics(){
 	this->Series2->Clear();
     this->Series2->RefreshSeries();
 
-	int start = this->Edit1->Text.ToInt();
-	int len = this->Edit2->Text.ToInt();
+	int start = this->Edit2->Text.ToInt();
+	int len = this->Edit1->Text.ToInt();
 
-	double max_x = Series1->MaxXValue();
-	double max_y = Series1->MaxYValue();
+	
+	double max_x = 0;
+	double max_y = 0;
 
+	if (Series1->MaxXValue() > Series3->MaxXValue()) {
+		max_x =  Series1->MaxXValue();		
+	}else{
+		max_x =  Series3->MaxXValue();
+	}
+
+	if (Series1->MaxYValue() > Series3->MaxYValue()) {
+		max_y =  Series1->MaxYValue();		
+	}else{
+		max_y =  Series3->MaxYValue();
+	}
+
+	
 	if (max_x == 0.0){
 		max_x = start + len * 1000;
 	}
@@ -153,8 +167,8 @@ void __fastcall TForm3::Button3Click(TObject *Sender)
             fout.close();
 			delete write_buffer;
 
-//			Label6->Caption = "iterations: " + IntToStr((int)write_buffer_iterations);
-			Label6->Caption = "buffered: " + IntToStr((int)write_buffer_pos);
+			Label6->Caption = "iterations: " + IntToStr((int)write_buffer_iterations);
+//			Label6->Caption = "buffered: " + IntToStr((int)write_buffer_pos);
 		}
 
 		this->CheckBox1->Enabled = true;
@@ -184,6 +198,7 @@ void __fastcall TForm3::Button4Click(TObject *Sender)
 {
 	this->mycbuf->get_left(this->buf, this->BUFSIZE);
 	showBufOnForm(this->BUFSIZE);
+	this->printTics();
 }
 //---------------------------------------------------------------------------
 
@@ -191,6 +206,7 @@ void __fastcall TForm3::Button5Click(TObject *Sender)
 {
 	this->mycbuf->get_right(this->buf, this->BUFSIZE);
 	showBufOnForm(this->BUFSIZE);
+	this->printTics();
 }
 //---------------------------------------------------------------------------
 
@@ -237,7 +253,7 @@ void __fastcall TForm3::Button7Click(TObject *Sender)
 
 void __fastcall TForm3::Edit2Change(TObject *Sender)
 {
-     this->printTics();
+	 this->printTics();
 }
 //---------------------------------------------------------------------------
 
@@ -257,7 +273,7 @@ void TForm3::deleteFFFF(){
 			mbufit += 2;
 			buffer.erase(mbufit - 2, mbufit);
 
-			this->Memo1->Lines->Add("found FF group");
+			//this->Memo1->Lines->Add("found FF group");
 		} else {
 			mbufit += 2;
 		}
@@ -288,16 +304,21 @@ void __fastcall TForm3::Button8Click(TObject *Sender)
 				fromfile.read(&buffer.front(), static_cast<std::size_t>(length));
 			}
 
-			Memo1->Lines->Add("bufreaded: " + IntToStr((int)buffer.size()));
+			buffer_cur_pos = 0;
+
+//			Memo1->Lines->Add("bufreaded: " + IntToStr((int)buffer.size()));
 
 			deleteFFFF();
 
-			Memo1->Lines->Add("bufreaded after clear: " + IntToStr((int)buffer.size()));
+ //			Memo1->Lines->Add("bufreaded after clear: " + IntToStr((int)buffer.size()));
+			this->Label11->Caption = "Total: " + IntToStr((int)buffer.size());
 
-            ShowBlockFromFile(0);
+			ShowBlockFromFile(0);
 
 			this->Button9->Enabled = true;
 			this->Button10->Enabled = true;
+
+
 
 		} else {
             MessageDlg("File does not exist", mtError,
@@ -306,18 +327,50 @@ void __fastcall TForm3::Button8Click(TObject *Sender)
 	}
 }
 //---------------------------------------------------------------------------
+DWORD TForm3::ShowBlockFromFile(int shift){
 
- DWORD TForm3::ShowBlockFromFile(int shift){
+	Memo1->Clear();
 
-	//Memo1->Clear();
+	if (shift < 0) {  // shift LEFT
+		shift = -shift;
+		int new_pos =  buffer_cur_pos - BUFSIZE - shift;
+		if (new_pos < 0) {
+			buffer_cur_pos = 0;    
+		}else{
+			buffer_cur_pos = new_pos;
+		}		
+	}else{  // shift RIGHT
+		int end_pos = buffer_cur_pos + BUFSIZE + shift;
+		if(end_pos >= buffer.size()){
+			buffer_cur_pos = buffer.size() - BUFSIZE;		
+		}else{
+			if(buffer_cur_pos < BUFSIZE){
+				buffer_cur_pos =  buffer_cur_pos + shift;
+			}else{
+				buffer_cur_pos =  buffer_cur_pos - BUFSIZE + shift;
+			}	
+		}
+	}
 
-	Memo1->Lines->Add("");
+	std::vector<unsigned char> l_buffer(buffer.begin() + buffer_cur_pos,
+										buffer.begin() + buffer_cur_pos + BUFSIZE);
+	buffer_cur_pos +=  BUFSIZE;									
 
-	UnicodeString Str;
+	int x = this->Edit7->Text.ToInt();
 
-	this->buffer.size();
+	this->Series3->Clear();
+	
+	for (int i = 2; i < l_buffer.size(); i += 2) {
+		this->Series3->AddXY(x,l_buffer[i]);
+		x += l_buffer[i+1];
+		this->Series3->AddXY(x,l_buffer[i]);
+	}
 
-	for (int i = 0; i < this->buffer.size();) {
+	this->Series3->RefreshSeries();
+
+	this->Label12->Caption = "Current: " + IntToStr((int)(buffer_cur_pos - BUFSIZE)) ;
+ /*
+	for (int i = 0; i < l_buffer.size();) {
 		Str += IntToStr((unsigned char)this->buffer[i++]);
 		Str += ":";
 		Str += IntToStr((unsigned char)this->buffer[i++]);
@@ -328,14 +381,37 @@ void __fastcall TForm3::Button8Click(TObject *Sender)
 			Str = "";
 		}
 	}
-	return 0;
- }
+ */
 
+	
+	return 0;
+}
+//---------------------------------------------------------------------------
 void __fastcall TForm3::Button11Click(TObject *Sender)
 {
 	delete (this->mycbuf);
 	this->mycbuf = new MyCBuf();
 	this->mycbuf->init(BUFSIZE * Edit5->Text.ToInt());
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm3::Button12Click(TObject *Sender)
+{
+	ShowBlockFromFile(0);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm3::Button9Click(TObject *Sender)
+{
+	ShowBlockFromFile(0 - this->Edit6->Text.ToInt());
+	this->printTics();	
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm3::Button10Click(TObject *Sender)
+{
+	ShowBlockFromFile(0 + this->Edit6->Text.ToInt());
+	this->printTics();	
 }
 //---------------------------------------------------------------------------
 
